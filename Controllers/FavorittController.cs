@@ -22,7 +22,9 @@ namespace Pendlerapp.Controllers
         // GET: Favoritt
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Favoritter.ToListAsync());
+            return View(await _context.Favoritter
+            .Include(f => f.Reisehistorikker)
+            .ToListAsync());
         }
 
         // GET: Favoritt/Details/5
@@ -34,7 +36,9 @@ namespace Pendlerapp.Controllers
             }
 
             var favoritt = await _context.Favoritter
+                .Include(f => f.Reisehistorikker)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (favoritt == null)
             {
                 return NotFound();
