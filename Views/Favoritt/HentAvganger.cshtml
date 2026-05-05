@@ -1,0 +1,84 @@
+@{
+    ViewData["Title"] = "Avgangstider";
+    var favoritt = ViewBag.Favoritt as Pendlerapp.Models.Favoritt;
+    var json = ViewBag.Avganger as string;
+}
+
+@using System.Text.Json
+
+<div class="max-w-2xl mx-auto">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Avgangstider</h1>
+        <p class="text-gray-500 mt-1">Fra: <span class="font-medium text-gray-700">@favoritt?.FraStoppested</span></p>
+    </div>
+
+    @if (!string.IsNullOrEmpty(json))
+    {
+        var doc = JsonDocument.Parse(json);
+        var calls = doc.RootElement
+            .GetProperty("data")
+            .GetProperty("stopPlace")
+            .GetProperty("estimatedCalls");
+
+        <div class="bg-white rounded-xl shadow overflow-hidden mb-6">
+            <table class="w-full text-sm text-left">
+                <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+                    <tr>
+                        <th class="px-4 py-3">Destinasjon</th>
+                        <th class="px-4 py-3">Planlagt</th>
+                        <th class="px-4 py-3">Forventet</th>
+                        <th class="px-4 py-3">Transport</th>
+                        <th class="px-4 py-3"></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @foreach (var call in calls.EnumerateArray())
+                    {
+                        var destination = call.GetProperty("destinationDisplay").GetProperty("frontText").GetString();
+                        var aimedTime = DateTime.Parse(call.GetProperty("aimedDepartureTime").GetString() ?? "");
+                        var expectedTime = DateTime.Parse(call.GetProperty("expectedDepartureTime").GetString() ?? "");
+                        var mode = call.GetProperty("serviceJourney").GetProperty("journeyPattern").GetProperty("line").GetProperty("transportMode").GetString();
+                        var isDelayed = expectedTime > aimedTime;
+
+                        var modeNorsk = mode switch
+                        {
+                            "rail" => "Tog",
+                            "bus" => "Buss",
+                            "tram" => "Trikk",
+                            "metro" => "T-bane",
+                            "ferry" => "Ferge",
+                            _ => mode
+                        };
+
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 font-medium text-gray-800">@destination</td>
+                            <td class="px-4 py-3 text-gray-600">@aimedTime.ToString("HH:mm")</td>
+                            <td class="px-4 py-3 @(isDelayed ? "text-red-500 font-medium" : "text-green-600")">
+                                @expectedTime.ToString("HH:mm")
+                            </td>
+                            <td class="px-4 py-3 text-gray-500">@modeNorsk</td>
+                            <td class="px-4 py-3">
+                                <form asp-action="VelgAvgang" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="favorittId" value="@favoritt?.Id" />
+                                    <input type="hidden" name="avgangstid" value="@expectedTime.ToString("o")" />
+                                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-xs font-medium">
+                                        Jeg tar denne
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-16 text-gray-400">
+            <p>Ingen avganger funnet.</p>
+        </div>
+    }
+
+    <a asp-action="Index" class="text-gray-500 hover:underline text-sm">Tilbake til mine favoritter</a>
+</div>

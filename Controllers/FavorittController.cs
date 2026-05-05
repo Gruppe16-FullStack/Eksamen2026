@@ -1,22 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Pendlerapp.Data;
 using Pendlerapp.Models;
+using Pendlerapp.Services;
 
 namespace Pendlerapp.Controllers
 {
     public class FavorittController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly EnturService _enturService;
 
-        public FavorittController(ApplicationDbContext context)
+        public FavorittController(ApplicationDbContext context, EnturService enturService)
         {
             _context = context;
+            _enturService = enturService;
         }
 
         // GET: Favoritt
@@ -54,8 +58,6 @@ namespace Pendlerapp.Controllers
         }
 
         // POST: Favoritt/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Navn,FraStoppested,FraStoppestedId,TilStoppested,TilStoppestedId,BrukerId")] Favoritt favoritt)
@@ -87,8 +89,6 @@ namespace Pendlerapp.Controllers
         }
 
         // POST: Favoritt/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Navn,FraStoppested,FraStoppestedId,TilStoppested,TilStoppestedId,Opprettet,BrukerId")] Favoritt favoritt)
@@ -97,6 +97,10 @@ namespace Pendlerapp.Controllers
             {
                 return NotFound();
             }
+
+            favoritt.BrukerId = string.Empty;
+            ModelState.ClearValidationState("BrukerId");
+            ModelState.MarkFieldValid("BrukerId");
 
             if (ModelState.IsValid)
             {
@@ -151,6 +155,51 @@ namespace Pendlerapp.Controllers
             }
 
             await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Favoritt/HentAvganger/5
+        /// <summary>
+        /// Henter avgangstider fra Entur for en favoritt uten å lagre.
+        /// </summary>
+        public async Task<IActionResult> HentAvganger(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var favoritt = await _context.Favoritter.FindAsync(id);
+            if (favoritt == null)
+            {
+                return NotFound();
+            }
+
+            var json = await _enturService.GetDepartures(favoritt.FraStoppestedId);
+
+            ViewBag.Avganger = json;
+            ViewBag.Favoritt = favoritt;
+            return View();
+        }
+
+        // POST: Favoritt/VelgAvgang
+        /// <summary>
+        /// Lagrer valgt avgang i Reisehistorikk.
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VelgAvgang(int favorittId, DateTime avgangstid)
+        {
+            var historikk = new Reisehistorikk
+            {
+                FavorittId = favorittId,
+                Brukt = DateTime.Now,
+                FaktiskAvgangstid = avgangstid
+            };
+
+            _context.Add(historikk);
+            await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 

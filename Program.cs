@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Pendlerapp.Data;
+using Pendlerapp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,11 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite("Data Source=pendlerapp.db"));
+
+builder.Services.AddHttpClient<EnturService>(client =>
+{
+    client.DefaultRequestHeaders.Add("ET-Client-Name", "gruppe16-pendlerapp");
+});
 
 var app = builder.Build();
 
