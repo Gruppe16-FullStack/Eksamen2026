@@ -48,7 +48,7 @@ namespace Pendlerapp.Controllers
         // GET: Reisehistorikk/Create
         public IActionResult Create()
         {
-            ViewData["FavorittId"] = new SelectList(_context.Favoritter, "Id", "FraStoppested");
+            ViewData["FavorittId"] = new SelectList(_context.Favoritter, "Id", "Navn");
             return View();
         }
 
@@ -65,7 +65,7 @@ namespace Pendlerapp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FavorittId"] = new SelectList(_context.Favoritter, "Id", "FraStoppested", reisehistorikk.FavorittId);
+            ViewData["FavorittId"] = new SelectList(_context.Favoritter, "Id", "Navn", reisehistorikk.FavorittId);
             return View(reisehistorikk);
         }
 
@@ -82,7 +82,7 @@ namespace Pendlerapp.Controllers
             {
                 return NotFound();
             }
-            ViewData["FavorittId"] = new SelectList(_context.Favoritter, "Id", "FraStoppested", reisehistorikk.FavorittId);
+            ViewData["FavorittId"] = new SelectList(_context.Favoritter, "Id", "Navn", reisehistorikk.FavorittId);
             return View(reisehistorikk);
         }
 
@@ -118,7 +118,7 @@ namespace Pendlerapp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FavorittId"] = new SelectList(_context.Favoritter, "Id", "FraStoppested", reisehistorikk.FavorittId);
+            ViewData["FavorittId"] = new SelectList(_context.Favoritter, "Id", "Navn", reisehistorikk.FavorittId);
             return View(reisehistorikk);
         }
 

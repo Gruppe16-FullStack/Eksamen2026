@@ -16,6 +16,6 @@ namespace Pendlerapp.Models
         public DateTime FaktiskAvgangstid { get; set; }
 
         // Navigasjonsproperty
-        public Favoritt Favoritt { get; set; } = null!;
+        public Favoritt? Favoritt { get; set; } = null!;
     }
 }
