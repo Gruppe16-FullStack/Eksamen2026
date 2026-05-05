@@ -1,0 +1,60 @@
+@model Pendlerapp.Models.Favoritt
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Favoritt</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Navn)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Navn)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FraStoppested)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FraStoppested)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FraStoppestedId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FraStoppestedId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TilStoppested)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TilStoppested)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TilStoppestedId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TilStoppestedId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Opprettet)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Opprettet)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.BrukerId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.BrukerId)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
