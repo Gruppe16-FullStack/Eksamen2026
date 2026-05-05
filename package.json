@@ -1,0 +1,24 @@
+{
+  "name": "pendlerapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://Gruppe16-FullStack@github.com/Gruppe16-FullStack/Eksamen2026.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Gruppe16-FullStack/Eksamen2026/issues"
+  },
+  "homepage": "https://github.com/Gruppe16-FullStack/Eksamen2026#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.4.19"
+  }
+}

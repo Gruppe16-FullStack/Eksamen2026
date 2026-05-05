@@ -58,8 +58,9 @@ namespace Pendlerapp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Navn,FraStoppested,FraStoppestedId,TilStoppested,TilStoppestedId,Opprettet,BrukerId")] Favoritt favoritt)
+        public async Task<IActionResult> Create([Bind("Id,Navn,FraStoppested,FraStoppestedId,TilStoppested,TilStoppestedId,BrukerId")] Favoritt favoritt)
         {
+            favoritt.Opprettet = DateTime.Now;
             if (ModelState.IsValid)
             {
                 _context.Add(favoritt);

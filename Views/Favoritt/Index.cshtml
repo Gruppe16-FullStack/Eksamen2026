@@ -4,57 +4,53 @@
     ViewData["Title"] = "Mine favoritter";
 }
 
-<h1>Mine favoritter</h1>
+<div class="max-w-5xl mx-auto">
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Mine favoritter</h1>
+        <a asp-action="Create" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+            + Opprett ny
+        </a>
+    </div>
 
-<p>
-    <a asp-action="Create">Opprett ny</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Navn)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FraStoppested)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TilStoppested)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Opprettet)
-            </th>
-            <th>
-                Antall reiser
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Navn)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FraStoppested)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TilStoppested)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Opprettet)
-                </td>
-                <td>
-                    @item.Reisehistorikker.Count()
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    @if (!Model.Any())
+    {
+        <div class="text-center py-16 text-gray-400">
+            <p class="text-lg">Du har ingen favoritter ennå.</p>
+            <a asp-action="Create" class="text-blue-600 hover:underline mt-2 inline-block">Opprett din første favoritt</a>
+        </div>
+    }
+    else
+    {
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+            <table class="w-full text-sm text-left">
+                <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+                    <tr>
+                        <th class="px-4 py-3">@Html.DisplayNameFor(model => model.Navn)</th>
+                        <th class="px-4 py-3">@Html.DisplayNameFor(model => model.FraStoppested)</th>
+                        <th class="px-4 py-3">@Html.DisplayNameFor(model => model.TilStoppested)</th>
+                        <th class="px-4 py-3">@Html.DisplayNameFor(model => model.Opprettet)</th>
+                        <th class="px-4 py-3">Antall reiser</th>
+                        <th class="px-4 py-3"></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @foreach (var item in Model)
+                    {
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 font-medium text-gray-800">@Html.DisplayFor(modelItem => item.Navn)</td>
+                            <td class="px-4 py-3 text-gray-600">@Html.DisplayFor(modelItem => item.FraStoppested)</td>
+                            <td class="px-4 py-3 text-gray-600">@Html.DisplayFor(modelItem => item.TilStoppested)</td>
+                            <td class="px-4 py-3 text-gray-500">@Html.DisplayFor(modelItem => item.Opprettet)</td>
+                            <td class="px-4 py-3 text-gray-500">@item.Reisehistorikker.Count()</td>
+                            <td class="px-4 py-3 flex gap-3 text-sm">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="text-blue-600 hover:underline">Rediger</a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="text-gray-600 hover:underline">Detaljer</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="text-red-500 hover:underline">Slett</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

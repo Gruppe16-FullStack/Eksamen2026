@@ -1,61 +1,62 @@
 @model Pendlerapp.Models.Favoritt
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Opprett favoritt";
 }
 
-<h1>Create</h1>
+<div class="max-w-lg mx-auto">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Opprett favoritt</h1>
+    </div>
 
-<h4>Favoritt</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+    <div class="bg-white rounded-xl shadow p-6">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Navn" class="control-label"></label>
-                <input asp-for="Navn" class="form-control" />
-                <span asp-validation-for="Navn" class="text-danger"></span>
+            <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm mb-4"></div>
+
+            <div class="mb-4">
+                <div class="flex items-center gap-2 mb-1">
+                    <label asp-for="Navn" class="block text-sm font-medium text-gray-700"></label>
+                    <div class="relative group">
+                        <span class="w-4 h-4 rounded-full bg-gray-300 text-gray-600 text-xs flex items-center justify-center cursor-pointer">?</span>
+                        <div class="absolute left-6 top-0 w-56 bg-gray-800 text-white text-xs rounded-lg px-3 py-2 hidden group-hover:block z-10">
+                            Dette er kallenavnet du gir ruten din, f.eks. "Jobb" eller "Hjem fra trening".
+                        </div>
+                    </div>
+                </div>
+                <input asp-for="Navn" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <span asp-validation-for="Navn" class="text-red-500 text-xs"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="FraStoppested" class="control-label"></label>
-                <input asp-for="FraStoppested" class="form-control" />
-                <span asp-validation-for="FraStoppested" class="text-danger"></span>
+
+            <div class="mb-4">
+                <label asp-for="FraStoppested" class="block text-sm font-medium text-gray-700 mb-1"></label>
+                <input asp-for="FraStoppested" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <span asp-validation-for="FraStoppested" class="text-red-500 text-xs"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="FraStoppestedId" class="control-label"></label>
-                <input asp-for="FraStoppestedId" class="form-control" />
-                <span asp-validation-for="FraStoppestedId" class="text-danger"></span>
+
+            <div class="mb-4">
+                <label asp-for="FraStoppestedId" class="block text-sm font-medium text-gray-700 mb-1"></label>
+                <input asp-for="FraStoppestedId" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <span asp-validation-for="FraStoppestedId" class="text-red-500 text-xs"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="TilStoppested" class="control-label"></label>
-                <input asp-for="TilStoppested" class="form-control" />
-                <span asp-validation-for="TilStoppested" class="text-danger"></span>
+
+            <div class="mb-4">
+                <label asp-for="TilStoppested" class="block text-sm font-medium text-gray-700 mb-1"></label>
+                <input asp-for="TilStoppested" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <span asp-validation-for="TilStoppested" class="text-red-500 text-xs"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="TilStoppestedId" class="control-label"></label>
-                <input asp-for="TilStoppestedId" class="form-control" />
-                <span asp-validation-for="TilStoppestedId" class="text-danger"></span>
+
+            <div class="mb-4">
+                <label asp-for="TilStoppestedId" class="block text-sm font-medium text-gray-700 mb-1"></label>
+                <input asp-for="TilStoppestedId" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <span asp-validation-for="TilStoppestedId" class="text-red-500 text-xs"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Opprettet" class="control-label"></label>
-                <input asp-for="Opprettet" class="form-control" />
-                <span asp-validation-for="Opprettet" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="BrukerId" class="control-label"></label>
-                <input asp-for="BrukerId" class="form-control" />
-                <span asp-validation-for="BrukerId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+
+            <div class="flex items-center justify-between mt-6">
+                <a asp-action="Index" class="text-gray-500 hover:underline text-sm">Tilbake til listen</a>
+                <input type="submit" value="Opprett" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-medium cursor-pointer" />
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
