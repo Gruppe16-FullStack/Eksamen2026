@@ -1,7 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+using Pendlerapp.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite("Data Source=pendlerapp.db"));
 
 var app = builder.Build();
 
