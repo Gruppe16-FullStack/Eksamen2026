@@ -6,36 +6,36 @@
 
 <div class="max-w-lg mx-auto">
     <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Rediger reisehistorikk</h1>
+        <h1 class="text-2xl font-bold text-white">Rediger reisehistorikk</h1>
     </div>
 
-    <div class="bg-white rounded-xl shadow p-6">
+    <div class="bg-gray-800 rounded-xl shadow border border-gray-700 p-6">
         <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm mb-4"></div>
+            <div asp-validation-summary="ModelOnly" class="text-red-400 text-sm mb-4"></div>
             <input type="hidden" asp-for="Id" />
 
             <div class="mb-4">
-                <label asp-for="FavorittId" class="block text-sm font-medium text-gray-700 mb-1"></label>
-                <select asp-for="FavorittId" asp-items="ViewBag.FavorittId" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label asp-for="FavorittId" class="block text-sm font-medium text-gray-300 mb-1"></label>
+                <select asp-for="FavorittId" asp-items="ViewBag.FavorittId" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">-- Velg favoritt --</option>
                 </select>
-                <span asp-validation-for="FavorittId" class="text-red-500 text-xs"></span>
+                <span asp-validation-for="FavorittId" class="text-red-400 text-xs"></span>
             </div>
 
             <div class="mb-4">
-                <label asp-for="Brukt" class="block text-sm font-medium text-gray-700 mb-1"></label>
-                <input asp-for="Brukt" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                <span asp-validation-for="Brukt" class="text-red-500 text-xs"></span>
+                <label asp-for="Brukt" class="block text-sm font-medium text-gray-300 mb-1"></label>
+                <input asp-for="Brukt" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <span asp-validation-for="Brukt" class="text-red-400 text-xs"></span>
             </div>
 
             <div class="mb-4">
-                <label asp-for="FaktiskAvgangstid" class="block text-sm font-medium text-gray-700 mb-1"></label>
-                <input asp-for="FaktiskAvgangstid" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                <span asp-validation-for="FaktiskAvgangstid" class="text-red-500 text-xs"></span>
+                <label asp-for="FaktiskAvgangstid" class="block text-sm font-medium text-gray-300 mb-1"></label>
+                <input asp-for="FaktiskAvgangstid" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <span asp-validation-for="FaktiskAvgangstid" class="text-red-400 text-xs"></span>
             </div>
 
             <div class="flex items-center justify-between mt-6">
-                <a asp-action="Index" class="text-gray-500 hover:underline text-sm">Tilbake til listen</a>
+                <a asp-action="Index" class="text-gray-400 hover:text-white text-sm">Tilbake til listen</a>
                 <input type="submit" value="Lagre" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-medium cursor-pointer" />
             </div>
         </form>

@@ -6,29 +6,29 @@
 
 <div class="max-w-lg mx-auto">
     <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">@Model?.Navn</h1>
-        <p class="text-gray-500 text-sm mt-1">Opprettet @Model?.Opprettet.ToString("dd.MM.yyyy HH:mm")</p>
+        <h1 class="text-2xl font-bold text-white">@Model?.Navn</h1>
+        <p class="text-gray-400 text-sm mt-1">Opprettet @Model?.Opprettet.ToString("dd.MM.yyyy HH:mm")</p>
     </div>
 
-    <div class="bg-white rounded-xl shadow p-6 mb-4">
-        <dl class="divide-y divide-gray-100">
+    <div class="bg-gray-800 rounded-xl shadow border border-gray-700 p-6 mb-4">
+        <dl class="divide-y divide-gray-700">
             <div class="py-3 flex justify-between">
-                <dt class="text-sm font-medium text-gray-600">@Html.DisplayNameFor(model => model.FraStoppested)</dt>
-                <dd class="text-sm text-gray-800">@Html.DisplayFor(model => model.FraStoppested)</dd>
+                <dt class="text-sm font-medium text-gray-400">@Html.DisplayNameFor(model => model.FraStoppested)</dt>
+                <dd class="text-sm text-white">@Html.DisplayFor(model => model.FraStoppested)</dd>
             </div>
             <div class="py-3 flex justify-between">
-                <dt class="text-sm font-medium text-gray-600">@Html.DisplayNameFor(model => model.TilStoppested)</dt>
-                <dd class="text-sm text-gray-800">@Html.DisplayFor(model => model.TilStoppested)</dd>
+                <dt class="text-sm font-medium text-gray-400">@Html.DisplayNameFor(model => model.TilStoppested)</dt>
+                <dd class="text-sm text-white">@Html.DisplayFor(model => model.TilStoppested)</dd>
             </div>
             <div class="py-3 flex justify-between">
-                <dt class="text-sm font-medium text-gray-600">Antall reiser</dt>
-                <dd class="text-sm text-gray-800">@Model?.Reisehistorikker.Count()</dd>
+                <dt class="text-sm font-medium text-gray-400">Antall reiser</dt>
+                <dd class="text-sm text-white">@Model?.Reisehistorikker.Count()</dd>
             </div>
         </dl>
     </div>
 
     <div class="flex items-center justify-between">
-        <a asp-action="Index" class="text-gray-500 hover:underline text-sm">Tilbake til listen</a>
+        <a asp-action="Index" class="text-gray-400 hover:text-white text-sm">Tilbake til listen</a>
         <a asp-action="Edit" asp-route-id="@Model?.Id" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-medium">Rediger</a>
     </div>
 </div>

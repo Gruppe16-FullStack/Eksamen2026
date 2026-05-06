@@ -1,11 +1,484 @@
 ﻿@{
     ViewData["Title"] = "Hjem";
+    var topFavoritter = ViewBag.TopFavoritter as List<Pendlerapp.Models.Favoritt>;
 }
 
-<div class="max-w-2xl mx-auto text-center py-16">
-    <h1 class="text-4xl font-bold text-gray-800 mb-4">Velkommen til Pendlerappen</h1>
-    <p class="text-gray-500 text-lg mb-8">Lagre dine faste reiseruter og se avgangstider med ett klikk.</p>
-    <a asp-controller="Favoritt" asp-action="Index" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-sm font-medium">
+<div class="-mx-4 -mt-6 mb-12 bg-gradient-to-br from-gray-800 to-gray-900 border-b border-gray-700 px-8 py-12 text-center">
+    <div class="flex justify-center mb-6 gap-6">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 13V8a2 2 0 012-2h14a2 2 0 012 2v5M3 13h18M3 13l-1 4h20l-1-4M7 17v2m10-2v2M9 6V4m6 2V4" />
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 6h8a2 2 0 012 2v8a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2zM6 10h12M8 18v2m8-2v2M8 6V4m8 2V4" />
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 17c3 0 4-2 6-2s3 2 6 2 3-2 6-2M5 12l2-6h10l2 6H5zM12 6V3" />
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 2C8 2 5 5 5 9v7l2 2h10l2-2V9c0-4-3-7-7-7zM8 18v2m8-2v2M8 9h8" />
+        </svg>
+    </div>
+    <h1 class="text-3xl font-bold text-white mb-2">Pendlerappen</h1>
+    <p class="text-gray-400 text-sm mb-6">Lagre dine faste reiseruter og se avgangstider med ett klikk.</p>
+    <a asp-controller="Favoritt" asp-action="Index" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-medium">
         Se mine favoritter
     </a>
 </div>
+
+<div class="max-w-2xl mx-auto mb-12">
+    <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Søk etter stoppested</h2>
+    <div class="relative">
+        <input type="text" id="hjem-sok" placeholder="Søk etter stoppested..." autocomplete="off"
+            class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400" />
+        <ul id="hjem-sok-liste" class="absolute z-20 w-full bg-gray-800 border border-gray-600 rounded-lg shadow mt-1 hidden"></ul>
+    </div>
+
+    <div id="avganger-container" class="mt-4 hidden">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-semibold text-gray-300" id="stoppested-navn"></h3>
+            <span class="text-xs text-gray-500" id="antall-info"></span>
+        </div>
+        <div class="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+            <table class="w-full text-sm text-left">
+                <thead class="bg-gray-700 text-gray-400 uppercase text-xs">
+                    <tr>
+                        <th class="px-4 py-3">Linje</th>
+                        <th class="px-4 py-3">Destinasjon</th>
+                        <th class="px-4 py-3">Avgang</th>
+                        <th class="px-4 py-3">Transport</th>
+                        <th class="px-4 py-3"></th>
+                    </tr>
+                </thead>
+                <tbody id="avganger-tabell" class="divide-y divide-gray-700"></tbody>
+            </table>
+        </div>
+        <button id="vis-flere-btn" class="mt-3 w-full bg-gray-700 hover:bg-gray-600 text-gray-300 py-2 rounded-lg text-sm">
+            Vis flere avganger
+        </button>
+    </div>
+</div>
+
+@if (topFavoritter != null && topFavoritter.Any())
+{
+    <div class="max-w-2xl mx-auto">
+        <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Dine mest brukte ruter</h2>
+        <div class="flex flex-col gap-3">
+            @foreach (var favoritt in topFavoritter)
+            {
+                <a asp-controller="Favoritt" asp-action="HentAvganger" asp-route-id="@favoritt.Id"
+                    class="bg-gray-800 border border-gray-700 hover:border-blue-500 rounded-xl px-6 py-4 flex items-center justify-between transition-all">
+                    <div class="text-left">
+                        <p class="font-semibold text-white">@favoritt.Navn</p>
+                        <p class="text-sm text-gray-400 mt-1">@favoritt.FraStoppested → @favoritt.TilStoppested</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-gray-500">@favoritt.Reisehistorikker.Count reiser</span>
+                        <p class="text-blue-400 text-sm font-medium mt-1">Se avganger →</p>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+}
+
+<!-- Modal -->
+<div id="avgang-modal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center">
+    <div class="bg-gray-800 rounded-xl border border-gray-700 shadow-xl w-full max-w-lg mx-4 p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-bold text-white">Planlegg reise</h2>
+            <button id="lukk-modal" class="text-gray-400 hover:text-white text-xl">✕</button>
+        </div>
+
+        <div class="mb-4">
+            <p class="text-sm text-gray-400 mb-1">Fra</p>
+            <p class="text-white font-medium" id="modal-fra-navn"></p>
+        </div>
+
+        <div class="mb-4 relative">
+            <label class="block text-sm text-gray-400 mb-1">Til stoppested</label>
+            <input type="text" id="modal-til-sok" placeholder="Velg endestasjon..." autocomplete="off"
+                class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400" />
+            <ul id="modal-til-liste" class="absolute z-30 w-full bg-gray-800 border border-gray-600 rounded-lg shadow mt-1 hidden max-h-48 overflow-y-auto"></ul>
+        </div>
+
+        <div id="modal-ruter" class="hidden">
+            <h3 class="text-sm font-semibold text-gray-400 mb-3">Tilgjengelige ruter</h3>
+            <div id="modal-ruter-liste" class="flex flex-col gap-3"></div>
+        </div>
+
+        <!-- Favoritt-popup -->
+        <div id="favoritt-popup" class="hidden mt-4 bg-gray-700 rounded-lg p-4 border border-gray-600">
+            <p class="text-sm text-gray-300 mb-2">Gi favoritten et navn:</p>
+            <input type="text" id="favoritt-navn-input" placeholder='f.eks. "Jobb" eller "Hjem fra trening"'
+                class="w-full bg-gray-600 border border-gray-500 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 mb-3" />
+            <div class="flex gap-2">
+                <button id="avbryt-favoritt" class="flex-1 bg-gray-600 hover:bg-gray-500 text-gray-300 py-2 rounded-lg text-sm">Avbryt</button>
+                <button id="lagre-favoritt-btn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium">Lagre favoritt</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let valgtStopId = null;
+    let valgtStopNavn = null;
+    let antallVist = 5;
+
+    // Modal state
+    let modalFraId = null;
+    let modalFraNavn = null;
+    let modalTilId = null;
+    let modalTilNavn = null;
+    let modalValgtAvgangstid = null;
+    let modalValgtPlanlagtAvgangstid = null;
+    let modalServiceJourneyId = null;
+
+    const sokFelt = document.getElementById('hjem-sok');
+    const sokListe = document.getElementById('hjem-sok-liste');
+    const avgangerContainer = document.getElementById('avganger-container');
+    const avgangerTabell = document.getElementById('avganger-tabell');
+    const stoppestedNavn = document.getElementById('stoppested-navn');
+    const antallInfo = document.getElementById('antall-info');
+    const visFlereBtn = document.getElementById('vis-flere-btn');
+
+    let debounceTimer;
+
+    sokFelt.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        const query = sokFelt.value.trim();
+        if (query.length < 2) { sokListe.classList.add('hidden'); return; }
+
+        debounceTimer = setTimeout(async () => {
+            const data = await sokStoppested(query);
+            sokListe.innerHTML = '';
+            if (data.length === 0) { sokListe.classList.add('hidden'); return; }
+
+            data.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item.label;
+                li.className = 'px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer';
+                li.addEventListener('click', () => {
+                    sokFelt.value = item.label;
+                    valgtStopId = item.id;
+                    valgtStopNavn = item.label;
+                    sokListe.classList.add('hidden');
+                    antallVist = 5;
+                    hentAvganger();
+                });
+                sokListe.appendChild(li);
+            });
+            sokListe.classList.remove('hidden');
+        }, 300);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!sokFelt.contains(e.target) && !sokListe.contains(e.target)) sokListe.classList.add('hidden');
+        if (!document.getElementById('modal-til-sok').contains(e.target) && !document.getElementById('modal-til-liste').contains(e.target)) {
+            document.getElementById('modal-til-liste').classList.add('hidden');
+        }
+    });
+
+    visFlereBtn.addEventListener('click', () => {
+        antallVist += 5;
+        hentAvganger();
+    });
+
+    async function sokStoppested(query) {
+        const response = await fetch(`/Home/SokStoppested?navn=${encodeURIComponent(query)}`);
+        return await response.json();
+    }
+
+    async function hentAvganger() {
+        if (!valgtStopId) return;
+
+        avgangerContainer.classList.remove('hidden');
+        stoppestedNavn.textContent = valgtStopNavn;
+        avgangerTabell.innerHTML = '<tr><td colspan="5" class="px-4 py-4 text-center text-gray-400">Henter avganger...</td></tr>';
+
+        const response = await fetch(`/Home/HentAvgangerForStoppested?stopId=${encodeURIComponent(valgtStopId)}&antall=${antallVist}`);
+        const json = await response.json();
+
+        const calls = json?.data?.stopPlace?.estimatedCalls;
+        if (!calls || calls.length === 0) {
+            avgangerTabell.innerHTML = '<tr><td colspan="5" class="px-4 py-4 text-center text-gray-400">Ingen avganger funnet.</td></tr>';
+            return;
+        }
+
+        antallInfo.textContent = `Viser ${calls.length} avganger`;
+        avgangerTabell.innerHTML = '';
+
+        calls.forEach(call => {
+            const aimed = new Date(call.aimedDepartureTime);
+            const expected = new Date(call.expectedDepartureTime);
+            const isDelayed = expected > aimed;
+            const line = call.serviceJourney?.journeyPattern?.line;
+            const serviceJourneyId = call.serviceJourney?.id;
+            const mode = line?.transportMode;
+            const modeEmoji = { rail: '🚂', bus: '🚌', tram: '🚊', metro: '🚇', ferry: '⛴️' }[mode] || '🚍';
+            const formatTime = (d) => d.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' });
+
+            const avgangHtml = isDelayed
+                ? `<span class="text-gray-500 line-through text-xs block">${formatTime(aimed)}</span>
+                   <span class="text-red-400 font-medium block">${formatTime(expected)}</span>
+                   <span class="bg-red-900 text-red-300 text-xs px-1 py-0.5 rounded">Forsinket</span>`
+                : `<span class="text-green-400 block">${formatTime(expected)}</span>
+                   <span class="bg-green-900 text-green-300 text-xs px-1 py-0.5 rounded">I rute</span>`;
+
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-gray-750';
+            tr.innerHTML = `
+                <td class="px-4 py-3">
+                    <span class="bg-blue-900 text-blue-200 text-xs font-semibold px-2 py-1 rounded">${line?.publicCode ?? '?'}</span>
+                </td>
+                <td class="px-4 py-3 text-white">${call.destinationDisplay?.frontText ?? ''}</td>
+                <td class="px-4 py-3">${avgangHtml}</td>
+                <td class="px-4 py-3 text-gray-400">${modeEmoji}</td>
+                <td class="px-4 py-3">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-xs font-medium velg-avgang-btn">
+                        Velg
+                    </button>
+                </td>
+            `;
+
+            tr.querySelector('.velg-avgang-btn').addEventListener('click', () => {
+                modalFraId = valgtStopId;
+                modalFraNavn = valgtStopNavn;
+                modalValgtAvgangstid = expected.toISOString();
+                modalValgtPlanlagtAvgangstid = aimed.toISOString();
+                modalServiceJourneyId = serviceJourneyId;
+                åpneModal();
+            });
+
+            avgangerTabell.appendChild(tr);
+        });
+    }
+
+    // Modal
+    async function åpneModal() {
+        document.getElementById('modal-fra-navn').textContent = modalFraNavn;
+        document.getElementById('modal-til-sok').value = '';
+        document.getElementById('modal-til-liste').classList.add('hidden');
+        document.getElementById('modal-ruter').classList.add('hidden');
+        document.getElementById('favoritt-popup').classList.add('hidden');
+        modalTilId = null;
+        modalTilNavn = null;
+        document.getElementById('avgang-modal').classList.remove('hidden');
+
+        if (modalServiceJourneyId) {
+            await hentOgVisStoppDropdown();
+        }
+    }
+
+    async function hentOgVisStoppDropdown() {
+        const kortNavn = valgtStopNavn.split(',')[0].trim();
+        const response = await fetch(`/Home/HentStopp?serviceJourneyId=${encodeURIComponent(modalServiceJourneyId)}&fraStopNavn=${encodeURIComponent(kortNavn)}`);
+        const stopp = await response.json();
+
+        const tilSokFelt = document.getElementById('modal-til-sok');
+        const tilListe = document.getElementById('modal-til-liste');
+
+        if (stopp.length === 0) return;
+
+        tilListe.innerHTML = '';
+        stopp.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item.navn;
+            li.className = 'px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer';
+            li.addEventListener('click', async () => {
+                tilSokFelt.value = item.navn;
+                modalTilId = item.id;
+                modalTilNavn = item.navn;
+                tilListe.classList.add('hidden');
+                await hentModalRuter();
+            });
+            tilListe.appendChild(li);
+        });
+
+        tilListe.classList.remove('hidden');
+        tilSokFelt.placeholder = 'Velg endestasjon...';
+    }
+
+    // Søk manuelt i modal hvis ønskelig
+    const modalTilSok = document.getElementById('modal-til-sok');
+    const modalTilListe = document.getElementById('modal-til-liste');
+    let modalDebounce;
+
+    modalTilSok.addEventListener('input', () => {
+        clearTimeout(modalDebounce);
+        const query = modalTilSok.value.trim();
+        if (query.length < 2) return;
+
+        modalDebounce = setTimeout(async () => {
+            const data = await sokStoppested(query);
+            modalTilListe.innerHTML = '';
+            if (data.length === 0) { modalTilListe.classList.add('hidden'); return; }
+
+            data.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item.label;
+                li.className = 'px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer';
+                li.addEventListener('click', async () => {
+                    modalTilSok.value = item.label;
+                    modalTilId = item.id;
+                    modalTilNavn = item.label;
+                    modalTilListe.classList.add('hidden');
+                    await hentModalRuter();
+                });
+                modalTilListe.appendChild(li);
+            });
+            modalTilListe.classList.remove('hidden');
+        }, 300);
+    });
+
+    async function hentModalRuter() {
+        if (!modalFraId || !modalTilId) return;
+
+        const ruterContainer = document.getElementById('modal-ruter');
+        const ruterListe = document.getElementById('modal-ruter-liste');
+        ruterContainer.classList.remove('hidden');
+        ruterListe.innerHTML = '<p class="text-gray-400 text-sm">Henter ruter...</p>';
+
+        const response = await fetch(`/Home/HentTur?fraId=${encodeURIComponent(modalFraId)}&tilId=${encodeURIComponent(modalTilId)}`);
+        const json = await response.json();
+
+        const patterns = json?.data?.trip?.tripPatterns;
+        if (!patterns || patterns.length === 0) {
+            ruterListe.innerHTML = '<p class="text-gray-400 text-sm">Ingen ruter funnet.</p>';
+            return;
+        }
+
+        ruterListe.innerHTML = '';
+        patterns.forEach(pattern => {
+            const aimed = new Date(pattern.aimedStartTime);
+            const expected = new Date(pattern.expectedStartTime);
+            const endTime = new Date(pattern.expectedEndTime);
+            const durationMin = Math.round(pattern.duration / 60);
+            const isDelayed = expected > aimed;
+            const formatTime = (d) => d.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' });
+
+            const legs = pattern.legs.filter(l => l.mode !== 'foot');
+            const linjer = legs.map(l => l.line?.publicCode).filter(Boolean).join(' → ');
+
+            const div = document.createElement('div');
+            div.className = 'bg-gray-700 rounded-lg p-3 border border-gray-600';
+            div.innerHTML = `
+                <div class="flex items-center justify-between mb-2">
+                    <div>
+                        ${isDelayed
+                            ? `<span class="text-gray-500 line-through text-xs mr-1">${formatTime(aimed)}</span>
+                               <span class="text-red-400 font-medium">${formatTime(expected)}</span>
+                               <span class="bg-red-900 text-red-300 text-xs px-1 py-0.5 rounded ml-1">Forsinket</span>`
+                            : `<span class="text-white font-medium">${formatTime(expected)}</span>`
+                        }
+                        <span class="text-gray-400 text-xs ml-2">→ ${formatTime(endTime)} (${durationMin} min)</span>
+                    </div>
+                </div>
+                ${linjer ? `<p class="text-blue-300 text-xs mb-2">${linjer}</p>` : ''}
+                <div class="flex gap-2">
+                    <button class="flex-1 bg-green-600 hover:bg-green-700 text-white py-1.5 rounded-lg text-xs font-medium jeg-tar-denne"
+                        data-avgangstid="${expected.toISOString()}"
+                        data-planlagt="${aimed.toISOString()}">
+                        Jeg tar denne
+                    </button>
+                    <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 rounded-lg text-xs font-medium lagre-som-favoritt"
+                        data-avgangstid="${expected.toISOString()}"
+                        data-planlagt="${aimed.toISOString()}">
+                        Lagre som favoritt
+                    </button>
+                </div>
+            `;
+
+            div.querySelector('.jeg-tar-denne').addEventListener('click', async (e) => {
+                const avgangstid = e.target.dataset.avgangstid;
+                const planlagt = e.target.dataset.planlagt;
+
+                // Opprett midlertidig favoritt og logg reisen
+                const favResponse = await fetch('/Favoritt/OpprettFavorittJson', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        navn: `${modalFraNavn} → ${modalTilNavn}`,
+                        fraStoppested: modalFraNavn,
+                        fraStoppestedId: modalFraId,
+                        tilStoppested: modalTilNavn,
+                        tilStoppestedId: modalTilId
+                    })
+                });
+
+                if (favResponse.ok) {
+                    const favoritt = await favResponse.json();
+                    const reiseResponse = await fetch('/Favoritt/VelgAvgangJson', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            favorittId: favoritt.id,
+                            avgangstid: avgangstid,
+                            planlagtAvgangstid: planlagt
+                        })
+                    });
+
+                    if (reiseResponse.ok) {
+                        document.getElementById('avgang-modal').classList.add('hidden');
+                        alert('Reise logget! 🎉');
+                        window.location.reload();
+                    }
+                }
+            });
+
+            div.querySelector('.lagre-som-favoritt').addEventListener('click', (e) => {
+                modalValgtAvgangstid = e.target.dataset.avgangstid;
+                modalValgtPlanlagtAvgangstid = e.target.dataset.planlagt;
+                document.getElementById('favoritt-popup').classList.remove('hidden');
+                document.getElementById('favoritt-navn-input').focus();
+            });
+
+            ruterListe.appendChild(div);
+        });
+    }
+
+    document.getElementById('avbryt-favoritt').addEventListener('click', () => {
+        document.getElementById('favoritt-popup').classList.add('hidden');
+    });
+
+    document.getElementById('lagre-favoritt-btn').addEventListener('click', async () => {
+        const navn = document.getElementById('favoritt-navn-input').value.trim();
+        if (!navn) {
+            alert('Skriv inn et navn for favoritten.');
+            return;
+        }
+
+        const response = await fetch('/Favoritt/OpprettFavorittJson', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                navn: navn,
+                fraStoppested: modalFraNavn,
+                fraStoppestedId: modalFraId,
+                tilStoppested: modalTilNavn,
+                tilStoppestedId: modalTilId
+            })
+        });
+
+        if (response.ok) {
+            const favoritt = await response.json();
+
+            // Logg også reisen
+            await fetch('/Favoritt/VelgAvgangJson', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    favorittId: favoritt.id,
+                    avgangstid: modalValgtAvgangstid,
+                    planlagtAvgangstid: modalValgtPlanlagtAvgangstid
+                })
+            });
+
+            document.getElementById('favoritt-popup').classList.add('hidden');
+            document.getElementById('avgang-modal').classList.add('hidden');
+            alert(`Favoritt "${navn}" er lagret! 🎉`);
+            window.location.reload();
+        } else {
+            alert('Noe gikk galt. Prøv igjen.');
+        }
+    });
+</script>

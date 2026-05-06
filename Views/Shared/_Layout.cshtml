@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="no">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,21 +8,25 @@
     <link rel="stylesheet" href="~/css/output.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body class="min-h-screen flex flex-col bg-gray-50">
+<body class="min-h-screen flex flex-col bg-gray-900 text-gray-100">
     <header>
-        <nav class="bg-white border-b shadow-sm mb-6">
+        <nav class="bg-gray-800 border-b border-gray-700 mb-6">
             <div class="max-w-7xl mx-auto px-4 flex items-center justify-between h-14">
-                <a class="text-lg font-semibold text-gray-800" asp-area="" asp-controller="Home" asp-action="Index">Pendlerapp</a>
-                <ul class="flex gap-6">
+                <a class="text-lg font-semibold text-white" asp-area="" asp-controller="Home" asp-action="Index">🚆 Pendlerapp</a>
+                <ul class="flex gap-6 items-center">
                     <li>
-                        <a class="text-gray-600 hover:text-gray-900" asp-area="" asp-controller="Home" asp-action="Index">Hjem</a>
+                        <a class="text-gray-300 hover:text-white text-sm" asp-area="" asp-controller="Home" asp-action="Index">Hjem</a>
                     </li>
                     <li>
-                        <a class="text-gray-600 hover:text-gray-900" asp-area="" asp-controller="Favoritt" asp-action="Index">Mine favoritter</a>
+                        <a class="text-gray-300 hover:text-white text-sm" asp-area="" asp-controller="Favoritt" asp-action="Index">Mine favoritter</a>
                     </li>
                     <li>
-                        <a class="text-gray-600 hover:text-gray-900" asp-area="" asp-controller="Home" asp-action="Privacy">Personvern</a>
+                        <a class="text-gray-300 hover:text-white text-sm" asp-area="" asp-controller="Reisehistorikk" asp-action="Index">Reisehistorikk</a>
                     </li>
+                    <li>
+                        <a class="text-gray-300 hover:text-white text-sm" asp-area="" asp-controller="Home" asp-action="Privacy">Personvern</a>
+                    </li>
+                    <partial name="_LoginPartial" />
                 </ul>
             </div>
         </nav>
@@ -34,7 +38,7 @@
         </main>
     </div>
 
-    <footer class="border-t bg-white text-gray-500 text-sm">
+    <footer class="border-t border-gray-700 bg-gray-800 text-gray-500 text-sm mt-6">
         <div class="max-w-7xl mx-auto px-4 py-3">
             &copy; 2026 - Pendlerapp
         </div>

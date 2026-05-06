@@ -1,0 +1,26 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <li>
+        <a class="text-gray-300 hover:text-white text-sm" asp-area="Identity" asp-page="/Account/Manage/Index">
+            Min profil
+        </a>
+    </li>
+    <li>
+        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home")" method="post">
+            <button type="submit" class="text-gray-300 hover:text-white text-sm">Logg ut</button>
+        </form>
+    </li>
+}
+else
+{
+    <li>
+        <a class="text-gray-300 hover:text-white text-sm" asp-area="Identity" asp-page="/Account/Login">Logg inn</a>
+    </li>
+    <li>
+        <a class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm" asp-area="Identity" asp-page="/Account/Register">Registrer</a>
+    </li>
+}

@@ -6,41 +6,50 @@
 
 <div class="max-w-5xl mx-auto">
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Reisehistorikk</h1>
-        <a asp-action="Create" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
-            + Legg til ny
-        </a>
+        <h1 class="text-2xl font-bold text-white">Reisehistorikk</h1>
     </div>
 
     @if (!Model.Any())
     {
         <div class="text-center py-16 text-gray-400">
-            <p class="text-lg">Ingen reisehistorikk registrert ennå.</p>
+            <p class="text-lg">Ingen reiser registrert ennå.</p>
+            <p class="text-sm mt-2">Velg en avgang fra dine favoritter for å logge en reise.</p>
         </div>
     }
     else
     {
-        <div class="bg-white rounded-xl shadow overflow-hidden">
+        <div class="bg-gray-800 rounded-xl shadow border border-gray-700 overflow-hidden">
             <table class="w-full text-sm text-left">
-                <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+                <thead class="bg-gray-700 text-gray-400 uppercase text-xs">
                     <tr>
-                        <th class="px-4 py-3">@Html.DisplayNameFor(model => model.Brukt)</th>
-                        <th class="px-4 py-3">@Html.DisplayNameFor(model => model.FaktiskAvgangstid)</th>
-                        <th class="px-4 py-3">Favoritt</th>
+                        <th class="px-4 py-3">Rute</th>
+                        <th class="px-4 py-3">Reisetidspunkt</th>
+                        <th class="px-4 py-3">Forsinket</th>
                         <th class="px-4 py-3"></th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100">
+                <tbody class="divide-y divide-gray-700">
                     @foreach (var item in Model)
                     {
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-4 py-3 text-gray-800">@Html.DisplayFor(modelItem => item.Brukt)</td>
-                            <td class="px-4 py-3 text-gray-600">@Html.DisplayFor(modelItem => item.FaktiskAvgangstid)</td>
-                            <td class="px-4 py-3 text-gray-600">@Html.DisplayFor(modelItem => item.Favoritt.FraStoppested)</td>
+                        var forsinkelse = (int)(item.FaktiskAvgangstid - item.PlanlagtAvgangstid).TotalMinutes;
+                        var varForsinket = forsinkelse > 0;
+
+                        <tr class="hover:bg-gray-750">
+                            <td class="px-4 py-3 font-medium text-white">@item.Favoritt?.Navn</td>
+                            <td class="px-4 py-3 text-gray-300">@item.PlanlagtAvgangstid.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td class="px-4 py-3">
+                                @if (varForsinket)
+                                {
+                                    <span class="bg-red-900 text-red-300 text-xs px-2 py-1 rounded">+@forsinkelse min</span>
+                                }
+                                else
+                                {
+                                    <span class="bg-green-900 text-green-300 text-xs px-2 py-1 rounded">I rute</span>
+                                }
+                            </td>
                             <td class="px-4 py-3 flex gap-3 text-sm">
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="text-blue-600 hover:underline">Rediger</a>
-                                <a asp-action="Details" asp-route-id="@item.Id" class="text-gray-600 hover:underline">Detaljer</a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="text-red-500 hover:underline">Slett</a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="text-gray-400 hover:underline">Detaljer</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="text-red-400 hover:underline">Slett</a>
                             </td>
                         </tr>
                     }

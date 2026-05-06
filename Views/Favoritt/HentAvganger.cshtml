@@ -2,76 +2,218 @@
     ViewData["Title"] = "Avgangstider";
     var favoritt = ViewBag.Favoritt as Pendlerapp.Models.Favoritt;
     var json = ViewBag.Avganger as string;
+    var erTrip = (bool)(ViewBag.ErTrip ?? false);
 }
 
 @using System.Text.Json
 
-<div class="max-w-2xl mx-auto">
+<div class="max-w-4xl mx-auto">
     <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Avgangstider</h1>
-        <p class="text-gray-500 mt-1">Fra: <span class="font-medium text-gray-700">@favoritt?.FraStoppested</span></p>
+        <h1 class="text-2xl font-bold text-white">Avgangstider</h1>
+        <p class="text-gray-400 mt-1">
+            Fra: <span class="font-medium text-gray-200">@favoritt?.FraStoppested</span>
+            @if (!string.IsNullOrEmpty(favoritt?.TilStoppested))
+            {
+                <span> → </span>
+                <span class="font-medium text-gray-200">@favoritt?.TilStoppested</span>
+            }
+        </p>
     </div>
 
     @if (!string.IsNullOrEmpty(json))
     {
         var doc = JsonDocument.Parse(json);
-        var calls = doc.RootElement
-            .GetProperty("data")
-            .GetProperty("stopPlace")
-            .GetProperty("estimatedCalls");
+        var dataElement = doc.RootElement.GetProperty("data");
 
-        <div class="bg-white rounded-xl shadow overflow-hidden mb-6">
-            <table class="w-full text-sm text-left">
-                <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
-                    <tr>
-                        <th class="px-4 py-3">Destinasjon</th>
-                        <th class="px-4 py-3">Planlagt</th>
-                        <th class="px-4 py-3">Forventet</th>
-                        <th class="px-4 py-3">Transport</th>
-                        <th class="px-4 py-3"></th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @foreach (var call in calls.EnumerateArray())
-                    {
-                        var destination = call.GetProperty("destinationDisplay").GetProperty("frontText").GetString();
-                        var aimedTime = DateTime.Parse(call.GetProperty("aimedDepartureTime").GetString() ?? "");
-                        var expectedTime = DateTime.Parse(call.GetProperty("expectedDepartureTime").GetString() ?? "");
-                        var mode = call.GetProperty("serviceJourney").GetProperty("journeyPattern").GetProperty("line").GetProperty("transportMode").GetString();
-                        var isDelayed = expectedTime > aimedTime;
+        if (erTrip)
+        {
+            var tripElement = dataElement.GetProperty("trip");
+            var tripPatterns = tripElement.GetProperty("tripPatterns");
 
-                        var modeNorsk = mode switch
-                        {
-                            "rail" => "Tog",
-                            "bus" => "Buss",
-                            "tram" => "Trikk",
-                            "metro" => "T-bane",
-                            "ferry" => "Ferge",
-                            _ => mode
-                        };
+            if (tripPatterns.GetArrayLength() == 0)
+            {
+                <div class="text-center py-16 text-gray-400">
+                    <p>Ingen reiser funnet mellom disse stoppestedene.</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var pattern in tripPatterns.EnumerateArray())
+                {
+                    var startTime = DateTime.Parse(pattern.GetProperty("expectedStartTime").GetString() ?? "");
+                    var endTime = DateTime.Parse(pattern.GetProperty("expectedEndTime").GetString() ?? "");
+                    var duration = pattern.GetProperty("duration").GetInt32();
+                    var durationMin = duration / 60;
+                    var legs = pattern.GetProperty("legs");
+                    var aimedStartTime = DateTime.Parse(pattern.GetProperty("aimedStartTime").GetString() ?? "");
 
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-4 py-3 font-medium text-gray-800">@destination</td>
-                            <td class="px-4 py-3 text-gray-600">@aimedTime.ToString("HH:mm")</td>
-                            <td class="px-4 py-3 @(isDelayed ? "text-red-500 font-medium" : "text-green-600")">
-                                @expectedTime.ToString("HH:mm")
-                            </td>
-                            <td class="px-4 py-3 text-gray-500">@modeNorsk</td>
-                            <td class="px-4 py-3">
-                                <form asp-action="VelgAvgang" method="post">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="favorittId" value="@favoritt?.Id" />
-                                    <input type="hidden" name="avgangstid" value="@expectedTime.ToString("o")" />
-                                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-xs font-medium">
-                                        Jeg tar denne
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+
+                    <div class="bg-gray-800 rounded-xl shadow border border-gray-700 p-4 mb-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="text-sm font-semibold text-white">
+                                @if (startTime > aimedStartTime)
+                                {
+                                    <span class="text-gray-500 line-through text-xs mr-1">@aimedStartTime.ToString("HH:mm")</span>
+                                    <span class="text-red-400">@startTime.ToString("HH:mm")</span>
+                                    <span class="bg-red-900 text-red-300 text-xs px-1 py-0.5 rounded ml-1">Forsinket</span>
+                                }
+                                else
+                                {
+                                    <span class="text-green-400">@startTime.ToString("HH:mm")</span>
+                                }
+                                <span class="text-white"> → @endTime.ToString("HH:mm")</span>
+                                <span class="text-gray-400 font-normal ml-2">(@durationMin min)</span>
+                            </div>
+                            <form asp-action="VelgAvgang" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="favorittId" value="@favoritt?.Id" />
+                                <input type="hidden" name="avgangstid" value="@startTime.ToString("o")" />
+                                <input type="hidden" name="planlagtAvgangstid" value="@aimedStartTime.ToString("o")" />
+                                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-xs font-medium">
+                                    Jeg tar denne
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2">
+                            @foreach (var leg in legs.EnumerateArray())
+                            {
+                                var legMode = leg.GetProperty("mode").GetString();
+                                var legFrom = leg.GetProperty("fromPlace").GetProperty("name").GetString();
+                                var legTo = leg.GetProperty("toPlace").GetProperty("name").GetString();
+                                var legStart = DateTime.Parse(leg.GetProperty("expectedStartTime").GetString() ?? "");
+                                var legEnd = DateTime.Parse(leg.GetProperty("expectedEndTime").GetString() ?? "");
+                                var legLine = leg.GetProperty("line");
+
+                                var legModeNorsk = legMode switch
+                                {
+                                    "rail" => "🚂",
+                                    "bus" => "🚌",
+                                    "tram" => "🚊",
+                                    "metro" => "🚇",
+                                    "ferry" => "⛴️",
+                                    "foot" => "🚶",
+                                    _ => legMode
+                                };
+
+                                var bgColor = legMode == "foot" ? "bg-gray-700 text-gray-400" : "bg-blue-900 text-blue-200";
+
+                                <div class="@bgColor rounded-lg px-3 py-2 text-xs flex-grow">
+                                    <div class="font-semibold">
+                                        @legModeNorsk
+                                        @if (legLine.ValueKind != JsonValueKind.Null)
+                                        {
+                                            <span class="ml-1">@legLine.GetProperty("publicCode").GetString()</span>
+                                        }
+                                    </div>
+                                    <div class="text-gray-400 mt-1">@legFrom → @legTo</div>
+                                    <div class="text-gray-500">@legStart.ToString("HH:mm") - @legEnd.ToString("HH:mm")</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        }
+        else
+        {
+            var stopPlaceElement = dataElement.GetProperty("stopPlace");
+
+            if (stopPlaceElement.ValueKind == JsonValueKind.Null)
+            {
+                <div class="text-center py-16 text-gray-400">
+                    <p>Fant ingen avganger. Sjekk at stoppested-ID er gyldig.</p>
+                </div>
+            }
+            else
+            {
+                var calls = stopPlaceElement.GetProperty("estimatedCalls");
+
+                <div class="bg-gray-800 rounded-xl shadow border border-gray-700 overflow-hidden mb-6">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-700 text-gray-400 uppercase text-xs">
+                            <tr>
+                                <th class="px-4 py-3">Linje</th>
+                                <th class="px-4 py-3">Destinasjon</th>
+                                <th class="px-4 py-3">Avgang</th>
+                                <th class="px-4 py-3">Ankomst</th>
+                                <th class="px-4 py-3">Reisetid</th>
+                                <th class="px-4 py-3">Spor</th>
+                                <th class="px-4 py-3">Transport</th>
+                                <th class="px-4 py-3"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-700">
+                            @foreach (var call in calls.EnumerateArray())
+                            {
+                                var destination = call.GetProperty("destinationDisplay").GetProperty("frontText").GetString();
+                                var aimedDep = DateTime.Parse(call.GetProperty("aimedDepartureTime").GetString() ?? "");
+                                var expectedDep = DateTime.Parse(call.GetProperty("expectedDepartureTime").GetString() ?? "");
+                                var aimedArr = DateTime.Parse(call.GetProperty("aimedArrivalTime").GetString() ?? "");
+                                var expectedArr = DateTime.Parse(call.GetProperty("expectedArrivalTime").GetString() ?? "");
+                                var isDelayed = expectedDep > aimedDep;
+                                var reisetid = (int)(aimedArr - aimedDep).TotalMinutes;
+
+                                var line = call.GetProperty("serviceJourney").GetProperty("journeyPattern").GetProperty("line");
+                                var lineCode = line.GetProperty("publicCode").GetString();
+                                var lineName = line.GetProperty("name").GetString();
+                                var mode = line.GetProperty("transportMode").GetString();
+                                var quay = call.GetProperty("quay");
+                                var spor = quay.GetProperty("publicCode").GetString();
+
+                                var modeNorsk = mode switch
+                                {
+                                    "rail" => "Tog",
+                                    "bus" => "Buss",
+                                    "tram" => "Trikk",
+                                    "metro" => "T-bane",
+                                    "ferry" => "Ferge",
+                                    _ => mode
+                                };
+
+                                <tr class="hover:bg-gray-750">
+                                    <td class="px-4 py-3">
+                                        <span class="bg-blue-900 text-blue-200 text-xs font-semibold px-2 py-1 rounded">@lineCode</span>
+                                        <span class="text-gray-500 text-xs block mt-1">@lineName</span>
+                                    </td>
+                                    <td class="px-4 py-3 font-medium text-white">@destination</td>
+                                    <td class="px-4 py-3">
+                                         @if (isDelayed)
+                                        {
+                                            <span class="text-gray-500 line-through text-xs block">@aimedDep.ToString("HH:mm")</span>
+                                            <span class="text-red-400 font-medium block">@expectedDep.ToString("HH:mm")</span>
+                                            <span class="bg-red-900 text-red-300 text-xs px-1 py-0.5 rounded mt-1 inline-block">Forsinket</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-green-400 block">@expectedDep.ToString("HH:mm")</span>
+                                            <span class="bg-green-900 text-green-300 text-xs px-1 py-0.5 rounded mt-1 inline-block">I rute</span>
+                                        }
+                                    </td>
+                                    <td class="px-4 py-3 text-gray-300">@expectedArr.ToString("HH:mm")</td>
+                                    <td class="px-4 py-3 text-gray-400">@reisetid min</td>
+                                    <td class="px-4 py-3">
+                                        <span class="bg-gray-700 text-gray-300 text-xs font-semibold px-2 py-1 rounded">Spor @spor</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-gray-400">@modeNorsk</td>
+                                    <td class="px-4 py-3">
+                                        <form asp-action="VelgAvgang" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="favorittId" value="@favoritt?.Id" />
+                                            <input type="hidden" name="avgangstid" value="@expectedDep.ToString("o")" />
+                                            <input type="hidden" name="planlagtAvgangstid" value="@aimedDep.ToString("o")" />
+                                            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-xs font-medium">
+                                                Jeg tar denne
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        }
     }
     else
     {
@@ -80,5 +222,5 @@
         </div>
     }
 
-    <a asp-action="Index" class="text-gray-500 hover:underline text-sm">Tilbake til mine favoritter</a>
+    <a asp-action="Index" class="text-gray-400 hover:text-white text-sm">Tilbake til mine favoritter</a>
 </div>

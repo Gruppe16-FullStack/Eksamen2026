@@ -6,30 +6,30 @@
 
 <div class="max-w-lg mx-auto">
     <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Slett reisehistorikk</h1>
-        <p class="text-gray-500 mt-1">Er du sikker på at du vil slette denne reisen?</p>
+        <h1 class="text-2xl font-bold text-white">Slett reisehistorikk</h1>
+        <p class="text-gray-400 mt-1">Er du sikker på at du vil slette denne reisen?</p>
     </div>
 
-    <div class="bg-white rounded-xl shadow p-6 mb-4">
-        <dl class="divide-y divide-gray-100">
+    <div class="bg-gray-800 rounded-xl shadow border border-gray-700 p-6 mb-4">
+        <dl class="divide-y divide-gray-700">
             <div class="py-3 flex justify-between">
-                <dt class="text-sm font-medium text-gray-600">@Html.DisplayNameFor(model => model.Brukt)</dt>
-                <dd class="text-sm text-gray-800">@Html.DisplayFor(model => model.Brukt)</dd>
+                <dt class="text-sm font-medium text-gray-400">@Html.DisplayNameFor(model => model.Brukt)</dt>
+                <dd class="text-sm text-white">@Html.DisplayFor(model => model.Brukt)</dd>
             </div>
             <div class="py-3 flex justify-between">
-                <dt class="text-sm font-medium text-gray-600">@Html.DisplayNameFor(model => model.FaktiskAvgangstid)</dt>
-                <dd class="text-sm text-gray-800">@Html.DisplayFor(model => model.FaktiskAvgangstid)</dd>
+                <dt class="text-sm font-medium text-gray-400">@Html.DisplayNameFor(model => model.FaktiskAvgangstid)</dt>
+                <dd class="text-sm text-white">@Html.DisplayFor(model => model.FaktiskAvgangstid)</dd>
             </div>
             <div class="py-3 flex justify-between">
-                <dt class="text-sm font-medium text-gray-600">Favoritt</dt>
-                <dd class="text-sm text-gray-800">@Html.DisplayFor(model => model.Favoritt.FraStoppested)</dd>
+                <dt class="text-sm font-medium text-gray-400">Favoritt</dt>
+                <dd class="text-sm text-white">@Html.DisplayFor(model => model.Favoritt.FraStoppested)</dd>
             </div>
         </dl>
     </div>
 
     <form asp-action="Delete" class="flex items-center justify-between">
         <input type="hidden" asp-for="Id" />
-        <a asp-action="Index" class="text-gray-500 hover:underline text-sm">Avbryt</a>
+        <a asp-action="Index" class="text-gray-400 hover:text-white text-sm">Avbryt</a>
         <input type="submit" value="Slett" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg text-sm font-medium cursor-pointer" />
     </form>
 </div>

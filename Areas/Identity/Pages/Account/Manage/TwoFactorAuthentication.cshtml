@@ -1,0 +1,77 @@
+﻿@page
+@using Microsoft.AspNetCore.Http.Features
+@model TwoFactorAuthenticationModel
+@{
+    ViewData["Title"] = "To-faktor autentisering";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+
+<partial name="_StatusMessage" for="StatusMessage" />
+
+<div class="bg-white rounded-xl shadow p-6">
+    @{
+        var consentFeature = HttpContext.Features.Get<ITrackingConsentFeature>();
+        @if (consentFeature?.CanTrack ?? true)
+        {
+            @if (Model.Is2faEnabled)
+            {
+                if (Model.RecoveryCodesLeft == 0)
+                {
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 text-sm text-red-700">
+                        <strong>Du har ingen gjenopprettingskoder igjen.</strong>
+                        <p class="mt-1">Du må <a asp-page="./GenerateRecoveryCodes" class="underline">generere nye koder</a> før du kan logge inn med gjenopprettingskode.</p>
+                    </div>
+                }
+                else if (Model.RecoveryCodesLeft == 1)
+                {
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 text-sm text-red-700">
+                        <strong>Du har 1 gjenopprettingskode igjen.</strong>
+                        <p class="mt-1">Du kan <a asp-page="./GenerateRecoveryCodes" class="underline">generere nye koder</a>.</p>
+                    </div>
+                }
+                else if (Model.RecoveryCodesLeft <= 3)
+                {
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4 text-sm text-yellow-700">
+                        <strong>Du har @Model.RecoveryCodesLeft gjenopprettingskoder igjen.</strong>
+                        <p class="mt-1">Du bør <a asp-page="./GenerateRecoveryCodes" class="underline">generere nye koder</a>.</p>
+                    </div>
+                }
+
+                <div class="flex gap-3 mb-6 flex-wrap">
+                    @if (Model.IsMachineRemembered)
+                    {
+                        <form method="post" style="display: inline-block">
+                            <button type="submit" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium">Glem denne nettleseren</button>
+                        </form>
+                    }
+                    <a asp-page="./Disable2fa" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium">Deaktiver 2FA</a>
+                    <a asp-page="./GenerateRecoveryCodes" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium">Tilbakestill gjenopprettingskoder</a>
+                </div>
+            }
+
+            <h4 class="text-lg font-semibold text-gray-800 mb-3">Autentiseringsapp</h4>
+            <div class="flex gap-3 flex-wrap">
+                @if (!Model.HasAuthenticator)
+                {
+                    <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">Legg til autentiseringsapp</a>
+                }
+                else
+                {
+                    <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">Sett opp autentiseringsapp</a>
+                    <a id="reset-authenticator" asp-page="./ResetAuthenticator" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium">Tilbakestill autentiseringsapp</a>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700">
+                <strong>Personvern- og informasjonskapselpolicy er ikke godkjent.</strong>
+                <p class="mt-1">Du må godta policyen før du kan aktivere to-faktor autentisering.</p>
+            </div>
+        }
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

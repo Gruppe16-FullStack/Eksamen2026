@@ -1,0 +1,48 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Logg inn";
+}
+
+<div class="max-w-md mx-auto">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-white">Logg inn</h1>
+        <p class="text-gray-400 mt-1">Bruk din lokale konto for å logge inn.</p>
+    </div>
+
+    <div class="bg-gray-800 rounded-xl shadow border border-gray-700 p-6">
+        <form id="account" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-red-400 text-sm mb-4" role="alert"></div>
+
+            <div class="mb-4">
+                <label asp-for="Input.Email" class="block text-sm font-medium text-gray-300 mb-1">E-post</label>
+                <input asp-for="Input.Email" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400" autocomplete="username" aria-required="true" placeholder="navn@eksempel.no" />
+                <span asp-validation-for="Input.Email" class="text-red-400 text-xs"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Input.Password" class="block text-sm font-medium text-gray-300 mb-1">Passord</label>
+                <input asp-for="Input.Password" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400" autocomplete="current-password" aria-required="true" placeholder="passord" />
+                <span asp-validation-for="Input.Password" class="text-red-400 text-xs"></span>
+            </div>
+
+            <div class="mb-4 flex items-center gap-2">
+                <input class="rounded border-gray-600 bg-gray-700" asp-for="Input.RememberMe" />
+                <label asp-for="Input.RememberMe" class="text-sm text-gray-400">Husk meg</label>
+            </div>
+
+            <button id="login-submit" type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium">
+                Logg inn
+            </button>
+
+            <div class="mt-4 text-sm text-gray-500 space-y-1">
+                <p><a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-blue-400 hover:underline">Registrer ny bruker</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

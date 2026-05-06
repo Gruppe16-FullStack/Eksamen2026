@@ -30,7 +30,7 @@ namespace Pendlerapp.Models
 
         public string BrukerId { get; set; } = string.Empty;
 
-        // Navigasjonsproperty
         public ICollection<Reisehistorikk> Reisehistorikker { get; set; } = new List<Reisehistorikk>();
     }
+    
 }

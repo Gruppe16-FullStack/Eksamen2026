@@ -6,7 +6,7 @@
 
 <div class="max-w-5xl mx-auto">
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Mine favoritter</h1>
+        <h1 class="text-2xl font-bold text-white">Mine favoritter</h1>
         <a asp-action="Create" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
             + Opprett ny
         </a>
@@ -16,14 +16,14 @@
     {
         <div class="text-center py-16 text-gray-400">
             <p class="text-lg">Du har ingen favoritter ennå.</p>
-            <a asp-action="Create" class="text-blue-600 hover:underline mt-2 inline-block">Opprett din første favoritt</a>
+            <a asp-action="Create" class="text-blue-400 hover:underline mt-2 inline-block">Opprett din første favoritt</a>
         </div>
     }
     else
     {
-        <div class="bg-white rounded-xl shadow overflow-hidden">
+        <div class="bg-gray-800 rounded-xl shadow overflow-hidden border border-gray-700">
             <table class="w-full text-sm text-left">
-                <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+                <thead class="bg-gray-700 text-gray-400 uppercase text-xs">
                     <tr>
                         <th class="px-4 py-3">@Html.DisplayNameFor(model => model.Navn)</th>
                         <th class="px-4 py-3">@Html.DisplayNameFor(model => model.FraStoppested)</th>
@@ -33,20 +33,20 @@
                         <th class="px-4 py-3"></th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100">
+                <tbody class="divide-y divide-gray-700">
                     @foreach (var item in Model)
                     {
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-4 py-3 font-medium text-gray-800">@Html.DisplayFor(modelItem => item.Navn)</td>
-                            <td class="px-4 py-3 text-gray-600">@Html.DisplayFor(modelItem => item.FraStoppested)</td>
-                            <td class="px-4 py-3 text-gray-600">@Html.DisplayFor(modelItem => item.TilStoppested)</td>
-                            <td class="px-4 py-3 text-gray-500">@Html.DisplayFor(modelItem => item.Opprettet)</td>
-                            <td class="px-4 py-3 text-gray-500">@item.Reisehistorikker.Count()</td>
+                        <tr class="hover:bg-gray-750">
+                            <td class="px-4 py-3 font-medium text-white">@Html.DisplayFor(modelItem => item.Navn)</td>
+                            <td class="px-4 py-3 text-gray-300">@Html.DisplayFor(modelItem => item.FraStoppested)</td>
+                            <td class="px-4 py-3 text-gray-300">@Html.DisplayFor(modelItem => item.TilStoppested)</td>
+                            <td class="px-4 py-3 text-gray-400">@Html.DisplayFor(modelItem => item.Opprettet)</td>
+                            <td class="px-4 py-3 text-gray-400">@item.Reisehistorikker.Count()</td>
                             <td class="px-4 py-3 flex gap-3 text-sm">
-                                <a asp-action="HentAvganger" asp-route-id="@item.Id" class="text-green-600 hover:underline">Avganger</a>
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="text-blue-600 hover:underline">Rediger</a>
-                                <a asp-action="Details" asp-route-id="@item.Id" class="text-gray-600 hover:underline">Detaljer</a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="text-red-500 hover:underline">Slett</a>
+                                <a asp-action="HentAvganger" asp-route-id="@item.Id" class="text-green-400 hover:underline">Avganger</a>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="text-blue-400 hover:underline">Rediger</a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="text-gray-400 hover:underline">Detaljer</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="text-red-400 hover:underline">Slett</a>
                             </td>
                         </tr>
                     }
