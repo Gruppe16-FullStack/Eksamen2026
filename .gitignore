@@ -431,3 +431,4 @@ FodyWeavers.xsd
 # .NET build output
 bin/
 obj/
+*.db
